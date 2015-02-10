@@ -48,33 +48,15 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Laisvydas Skurevicius
  */
 public class LSFCloud extends Cloud {
+    
+    private String cloudName;
 
     private static final Logger LOGGER = Logger.getLogger(LSFCloud.class.getName());
 
-    /*@Initializer(after = InitMilestone.JOB_LOADED)
-     public static void init() {
-     Hudson h = Hudson.getInstance();
-     List<Node> slaves = h.getNodes();
-     LOGGER.info("-----------------------------------INITIALIZATION------------------------------------------");
-     // Turning the AUTOMATIC_SLAVE_LAUNCH flag off because the below slave removals
-     // causes computer launch in other slaves that have not been removed yet.
-     // To study how a slave removal updates the entire list, one can refer to
-     // Hudson NodeProvisioner class and follow this method chain removeNode() ->
-     // setNodes() -> updateComputerList() -> updateComputer().
-     h.AUTOMATIC_SLAVE_LAUNCH = false;
-     for (Node n : slaves) {
-     //Remove all slaves that were persisted when Jenkins shutdown.
-     if (n instanceof LSFSlave) {
-     ((LSFSlave) n).terminate();
-     }
-     }
-
-     // Turn it back on for future real slaves.
-     h.AUTOMATIC_SLAVE_LAUNCH = true;
-     }*/
     @DataBoundConstructor
-    public LSFCloud() {
+    public LSFCloud(String cloudName) {
         super("LSFCloud");
+        this.cloudName = cloudName;
     }
 
     @Override
@@ -107,35 +89,27 @@ public class LSFCloud extends Cloud {
         return false;
     }
 
-    public String getCloudName() {
-        DescriptorImpl descriptor = (DescriptorImpl) super.getDescriptor();
-        return descriptor.getCloudName();
+    public void setCloudName(String cloudName) {
+        this.cloudName = cloudName;
+    }
 
+    public String getCloudName() {
+        return cloudName;
+        //return getDescriptor().getCloudName();
+
+    }
+
+    @Override
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl) super.getDescriptor();
     }
 
     @Extension
     public static class DescriptorImpl extends Descriptor<Cloud> {
 
-        private String cloudName = "";
-
-        public String getCloudName() {
-            return cloudName;
-        }
-
-        public DescriptorImpl() {
-            load();
-        }
-
         @Override
         public String getDisplayName() {
             return "LSF Cloud";
-        }
-
-        @Override
-        public boolean configure(StaplerRequest sr, JSONObject jsono) throws FormException {
-            cloudName = jsono.getString("cloudName");
-            save();
-            return super.configure(sr, jsono);
         }
 
     }
