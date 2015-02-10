@@ -7,10 +7,10 @@ import java.util.*;
 public class InjectedTest extends junit.framework.TestCase {
   public static junit.framework.Test suite() throws Exception {
     Map parameters = new HashMap();
-    parameters.put("basedir","D:\\CERN\\Jenkins cloud plugin\\cloud");
-    parameters.put("artifactId","cloud");
-    parameters.put("outputDirectory","D:\\CERN\\Jenkins cloud plugin\\cloud\\target\\classes");
-    parameters.put("testOutputDirectory","D:\\CERN\\Jenkins cloud plugin\\cloud\\target\\test-classes");
+    parameters.put("basedir","D:\\CERN\\GitHub\\lsf-jenkins");
+    parameters.put("artifactId","lsf-jenkins");
+    parameters.put("outputDirectory","D:\\CERN\\GitHub\\lsf-jenkins\\target\\classes");
+    parameters.put("testOutputDirectory","D:\\CERN\\GitHub\\lsf-jenkins\\target\\test-classes");
     parameters.put("requirePI","false");
     return new org.jvnet.hudson.test.PluginAutomaticTestBuilder().build(parameters);
   }
