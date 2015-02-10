@@ -1,0 +1,91 @@
+Exploding C:\Users\seven\.m2\repository\org\jenkins-ci\main\jenkins-war\1.580.1\jenkins-war-1.580.1-war-for-test.jar into D:\CERN\Jenkins cloud plugin\cloud\.\target\jenkins-for-test
+Feb 06, 2015 11:21:46 AM org.mortbay.log.Slf4jLog info
+INFO: Logging to org.slf4j.impl.JDK14LoggerAdapter(org.mortbay.log) via org.mortbay.log.Slf4jLog
+Feb 06, 2015 11:21:46 AM org.mortbay.log.Slf4jLog info
+INFO: jetty-6.1.26
+Feb 06, 2015 11:21:46 AM org.mortbay.log.Slf4jLog info
+INFO: NO JSP Support for , did not find org.apache.jasper.servlet.JspServlet
+Feb 06, 2015 11:21:46 AM org.mortbay.log.Slf4jLog info
+INFO: Started SocketConnector@0.0.0.0:56370
+Feb 06, 2015 11:21:47 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Started initialization
+Feb 06, 2015 11:22:03 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Listed all plugins
+Feb 06, 2015 11:22:03 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Prepared all plugins
+Feb 06, 2015 11:22:03 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Started all plugins
+Feb 06, 2015 11:22:04 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Augmented all extensions
+Feb 06, 2015 11:22:04 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Loaded all jobs
+Feb 06, 2015 11:22:12 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Completed initialization
+Feb 06, 2015 11:22:13 AM hudson.UDPBroadcastThread run
+WARNING: UDP handling problem
+java.net.SocketException: error setting options
+	at java.net.TwoStacksPlainDatagramSocketImpl.join(Native Method)
+	at java.net.AbstractPlainDatagramSocketImpl.join(AbstractPlainDatagramSocketImpl.java:179)
+	at java.net.MulticastSocket.joinGroup(MulticastSocket.java:323)
+	at hudson.UDPBroadcastThread.run(UDPBroadcastThread.java:76)
+
+Feb 06, 2015 11:22:13 AM org.mortbay.log.Slf4jLog info
+INFO: jetty-6.1.26
+Feb 06, 2015 11:22:13 AM org.mortbay.log.Slf4jLog info
+INFO: Started SocketConnector@0.0.0.0:56372
+Feb 06, 2015 11:22:17 AM org.mortbay.log.Slf4jLog info
+INFO: Stopped SocketConnector@0.0.0.0:56370
+Feb 06, 2015 11:22:17 AM org.mortbay.log.Slf4jLog info
+INFO: jetty-6.1.26
+Feb 06, 2015 11:22:17 AM org.mortbay.log.Slf4jLog info
+INFO: NO JSP Support for , did not find org.apache.jasper.servlet.JspServlet
+Feb 06, 2015 11:22:17 AM org.mortbay.log.Slf4jLog info
+INFO: Started SocketConnector@0.0.0.0:56374
+Feb 06, 2015 11:22:17 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Started initialization
+Feb 06, 2015 11:22:17 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Listed all plugins
+Feb 06, 2015 11:22:17 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Prepared all plugins
+Feb 06, 2015 11:22:17 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Started all plugins
+Feb 06, 2015 11:22:17 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Augmented all extensions
+Feb 06, 2015 11:22:17 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Loaded all jobs
+Feb 06, 2015 11:22:19 AM jenkins.InitReactorRunner$1 onAttained
+INFO: Completed initialization
+Feb 06, 2015 11:22:19 AM hudson.UDPBroadcastThread run
+WARNING: UDP handling problem
+java.net.SocketException: error setting options
+	at java.net.TwoStacksPlainDatagramSocketImpl.join(Native Method)
+	at java.net.AbstractPlainDatagramSocketImpl.join(AbstractPlainDatagramSocketImpl.java:179)
+	at java.net.MulticastSocket.joinGroup(MulticastSocket.java:323)
+	at hudson.UDPBroadcastThread.run(UDPBroadcastThread.java:76)
+
+=== Starting CliSanityTest.testCliSanity
+Feb 06, 2015 11:22:19 AM org.mortbay.log.Slf4jLog info
+INFO: Stopped SocketConnector@0.0.0.0:56374
+java.nio.file.FileSystemException: C:\Users\seven\AppData\Local\Temp\hudson5737234404915992081tmp\credentials\WEB-INF\lib\classes.jar: The process cannot access the file because it is being used by another process.
+
+	at sun.nio.fs.WindowsException.translateToIOException(WindowsException.java:86)
+	at sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:97)
+	at sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:102)
+	at sun.nio.fs.WindowsFileSystemProvider.implDelete(WindowsFileSystemProvider.java:269)
+	at sun.nio.fs.AbstractFileSystemProvider.delete(AbstractFileSystemProvider.java:103)
+	at java.nio.file.Files.delete(Files.java:1126)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:483)
+	at hudson.Util.deleteFile(Util.java:247)
+	at hudson.Util.deleteRecursive(Util.java:310)
+	at hudson.Util.deleteContentsRecursive(Util.java:212)
+	at hudson.Util.deleteRecursive(Util.java:301)
+	at hudson.Util.deleteContentsRecursive(Util.java:212)
+	at hudson.Util.deleteRecursive(Util.java:301)
+	at hudson.Util.deleteContentsRecursive(Util.java:212)
+	at hudson.Util.deleteRecursive(Util.java:301)
+	at hudson.Util.deleteContentsRecursive(Util.java:212)
+	at hudson.Util.deleteRecursive(Util.java:301)
+	at org.jvnet.hudson.test.TestPluginManager$1.run(TestPluginManager.java:146)
