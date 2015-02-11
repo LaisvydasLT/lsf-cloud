@@ -8,10 +8,10 @@
         </causes>
       </hudson.model.CauseAction>
     </actions>
-    <id>5</id>
-    <task class="hudson.model.FreeStyleProject">test</task>
-    <inQueueSince>1423587903503</inQueueSince>
-    <buildableStartMilliseconds>1423587903510</buildableStartMilliseconds>
+    <id>4</id>
+    <task class="hudson.model.FreeStyleProject">new</task>
+    <inQueueSince>1423587900938</inQueueSince>
+    <buildableStartMilliseconds>1423587900941</buildableStartMilliseconds>
     <isPending>false</isPending>
   </hudson.model.Queue_-BuildableItem>
   <hudson.model.Queue_-BuildableItem>
@@ -22,10 +22,10 @@
         </causes>
       </hudson.model.CauseAction>
     </actions>
-    <id>4</id>
-    <task class="hudson.model.FreeStyleProject">new</task>
-    <inQueueSince>1423587900938</inQueueSince>
-    <buildableStartMilliseconds>1423587900941</buildableStartMilliseconds>
+    <id>5</id>
+    <task class="hudson.model.FreeStyleProject">test</task>
+    <inQueueSince>1423587903503</inQueueSince>
+    <buildableStartMilliseconds>1423587903510</buildableStartMilliseconds>
     <isPending>false</isPending>
   </hudson.model.Queue_-BuildableItem>
 </list>

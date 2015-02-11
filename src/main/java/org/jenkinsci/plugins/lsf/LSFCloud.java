@@ -47,8 +47,11 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class LSFCloud extends Cloud {
 
+    // The name of the cloud
     private String cloudName;
+    // LSF queue type
     private String queueType;
+    // The label that the cloud is associated with
     private String label;
 
     private static final Logger LOGGER = Logger.getLogger(LSFCloud.class.getName());
@@ -61,6 +64,7 @@ public class LSFCloud extends Cloud {
         this.label = label;
     }
 
+    // Creates a slave when there is a running job with an appropriate label
     @Override
     public Collection<NodeProvisioner.PlannedNode> provision(Label label, final int excessWorkload) {
         Hudson h = Hudson.getInstance();
@@ -83,6 +87,7 @@ public class LSFCloud extends Cloud {
         return new LSFSlave(name, this.label, numExecutors);
     }
 
+    // Checks if a jobs label matches the clouds label
     @Override
     public boolean canProvision(Label label) {
         if (label.matches(Label.parse(this.label))) {

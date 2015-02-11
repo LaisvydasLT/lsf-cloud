@@ -37,6 +37,7 @@ import java.util.logging.Logger;
  */
 public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
 
+    // The amount of minutes until a slave is terminated when idle
     public final int idleTerminationMinutes;
 
     private static final Logger LOGGER = Logger
@@ -46,6 +47,8 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
         this.idleTerminationMinutes = idleTerminationMinutes;
     }
 
+    
+    // Checks if the slave computer needs to be terminated and terminates if needed
     @Override
     public long check(SlaveComputer c) {
 

@@ -28,7 +28,6 @@ import hudson.model.Descriptor;
 import hudson.model.Hudson;
 import hudson.model.Node;
 import hudson.model.Slave;
-import hudson.slaves.ComputerLauncher;
 import hudson.slaves.JNLPLauncher;
 import hudson.slaves.NodeProperty;
 import java.io.IOException;
@@ -48,10 +47,11 @@ public class LSFSlave extends Slave {
             .getName());
 
     public LSFSlave(String name, String label, int numExecutors) throws Descriptor.FormException, IOException {
-        super(name, "description", "jenkins", numExecutors, Node.Mode.NORMAL, label, new JNLPLauncher(), new LSFRetentionStrategy(0), Collections.<NodeProperty<?>> emptyList());
+        super(name, "description", "jenkins", numExecutors, Node.Mode.NORMAL, label, new JNLPLauncher(), new LSFRetentionStrategy(1), Collections.<NodeProperty<?>> emptyList());
         LOGGER.info("Constructing LSF slave " + name);
     }
 
+    // terminates the slave
     public void terminate() {
         LOGGER.info("Terminating slave " + getNodeName());
         try {
