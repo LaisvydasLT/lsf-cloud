@@ -1,0 +1,9 @@
+Started by user [8mha:AAAAlh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzOEgYu/dLi1CL9vNKcHACFIKlWvwAAAA==[0manonymous
+Building remotely on [8mha:AAAAxh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyDEgYr/eT83ILSktQifZ9gN92s1LzszLxiXeNUk2Qz89RkXSPDRCNdEwsLc90ksxRz3WRDAwNTCwtjyzRLIwAY0poD7wAAAA==[0mLSF-jenkins-3e4c67ec-21a2-4887-b6d7-c10058839f92 (LSF2) in workspace jenkins/workspace/test
+[test] $ cmd /c call C:\Users\seven\AppData\Local\Temp\hudson5230520397588752320.bat
+
+C:\Users\seven\Downloads\jenkins\workspace\test>echo foo 
+foo
+
+C:\Users\seven\Downloads\jenkins\workspace\test>exit 0 
+Finished: SUCCESS
