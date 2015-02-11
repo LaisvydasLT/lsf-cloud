@@ -1,9 +1,0 @@
-Started by user [8mha:AAAAlh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzOEgYu/dLi1CL9vNKcHACFIKlWvwAAAA==[0manonymous
-Building on master in workspace D:\CERN\GitHub\lsf-jenkins\work\workspace\test2
-[test2] $ cmd /c call C:\Users\seven\AppData\Local\Temp\hudson7550827409057899530.bat
-
-D:\CERN\GitHub\lsf-jenkins\work\workspace\test2>echo foo 
-foo
-
-D:\CERN\GitHub\lsf-jenkins\work\workspace\test2>exit 0 
-Finished: SUCCESS

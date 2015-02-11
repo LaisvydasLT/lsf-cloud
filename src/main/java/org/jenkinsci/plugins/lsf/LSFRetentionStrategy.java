@@ -56,13 +56,13 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
             return 1;
         }
 
-        for (Project p : Hudson.getInstance().getProjects()) {
+        /*for (Project p : Hudson.getInstance().getProjects()) {
             if (p.isBuilding() && p.getAssignedLabelString().equals(c.getNode().getLabelString())) {
                 System.out.println("SUCCESS " + c.getNode().getLabelString());
                 return 1;
             }
-        }
-        System.out.println("FAIL " + c.getNode().getLabelString());
+        }*/
+        //System.out.println("FAIL " + c.getNode().getLabelString());
         
         if ((System.currentTimeMillis() - c.getConnectTime())
                 < MINUTES.toMillis(idleTerminationMinutes)) {

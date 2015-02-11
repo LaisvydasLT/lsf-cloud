@@ -34,20 +34,33 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import hudson.plugins.sshslaves.SSHLauncher;
 
 /**
  *
  * @author Laisvydas Skurevicius
  */
 public class LSFSlave extends Slave {
-    
-
 
     private static final Logger LOGGER = Logger.getLogger(LSFSlave.class
             .getName());
 
-    public LSFSlave(String name, String label, int numExecutors) throws Descriptor.FormException, IOException {
-        super(name, "description", "jenkins", numExecutors, Node.Mode.NORMAL, label, new JNLPLauncher(), new LSFRetentionStrategy(1), Collections.<NodeProperty<?>> emptyList());
+    public LSFSlave(String name, 
+            String label, 
+            int numExecutors, 
+            String hostName, 
+            int port, 
+            String userName, 
+            String password) throws Descriptor.FormException, IOException {
+        super(name,
+                "description",
+                "jenkins",
+                numExecutors,
+                Node.Mode.NORMAL,
+                label,
+                new SSHLauncher(hostName, port, userName, password, "", ""),
+                new LSFRetentionStrategy(1),
+                Collections.<NodeProperty<?>>emptyList());
         LOGGER.info("Constructing LSF slave " + name);
     }
 
@@ -73,6 +86,7 @@ public class LSFSlave extends Slave {
 
     @Extension
     public static class DescriptorImpl extends SlaveDescriptor {
+
         @Override
         public String getDisplayName() {
             return "LSF Slave";

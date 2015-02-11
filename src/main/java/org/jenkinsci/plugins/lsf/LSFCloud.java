@@ -53,15 +53,23 @@ public class LSFCloud extends Cloud {
     private String queueType;
     // The label that the cloud is associated with
     private String label;
+    private String hostName;
+    private int port;
+    private String userName;
+    private String password;
 
     private static final Logger LOGGER = Logger.getLogger(LSFCloud.class.getName());
 
     @DataBoundConstructor
-    public LSFCloud(String cloudName, String queueType, String label) {
+    public LSFCloud(String cloudName, String queueType, String label, String hostName, int port, String userName, String password) {
         super("LSFCloud");
         this.cloudName = cloudName;
         this.queueType = queueType;
         this.label = label;
+        this.hostName = hostName;
+        this.port = port;
+        this.userName = userName;
+        this.password = password;
     }
 
     // Creates a slave when there is a running job with an appropriate label
@@ -84,7 +92,7 @@ public class LSFCloud extends Cloud {
 
     private LSFSlave doProvision(int numExecutors) throws Descriptor.FormException, IOException {
         String name = "LSF-jenkins-" + UUID.randomUUID().toString();
-        return new LSFSlave(name, this.label, numExecutors);
+        return new LSFSlave(name, this.label, numExecutors, hostName, port, userName, password);
     }
 
     // Checks if a jobs label matches the clouds label
@@ -118,6 +126,38 @@ public class LSFCloud extends Cloud {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
