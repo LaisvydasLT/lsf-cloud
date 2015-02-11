@@ -25,8 +25,14 @@ THE SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <f:entry title="Cloud Name" field="cloudName">
-      <f:textbox field="cloudName" clazz="required" >${it.getCloudName()}</f:textbox>
-  </f:entry>
+    <f:entry title="Cloud Name" field="cloudName">
+        <f:textbox field="cloudName" >${it.getCloudName()}</f:textbox>
+    </f:entry>
+    <f:entry title="LSF queue type" field="queueType">
+        <f:textbox field="queueType" >${it.getQueueType()}</f:textbox>
+    </f:entry>
+    <f:entry title="Label" field="label">
+        <f:textbox field="label" >${it.getLabel()}</f:textbox>
+    </f:entry>
 </j:jelly>
 

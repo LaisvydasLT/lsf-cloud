@@ -1,4 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<org.jenkinsci.plugins.cloud.MyCloud_-DescriptorImpl plugin="cloud@1.0-SNAPSHOT">
-  <cloudName></cloudName>
-</org.jenkinsci.plugins.cloud.MyCloud_-DescriptorImpl>

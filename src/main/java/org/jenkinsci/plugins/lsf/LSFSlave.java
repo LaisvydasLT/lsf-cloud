@@ -47,8 +47,8 @@ public class LSFSlave extends Slave {
     private static final Logger LOGGER = Logger.getLogger(LSFSlave.class
             .getName());
 
-    public LSFSlave(String name, int numExecutors) throws Descriptor.FormException, IOException {
-        super(name, "description", "jenkins", numExecutors, Node.Mode.NORMAL, "LSF", new JNLPLauncher(), new LSFRetentionStrategy(0), Collections.<NodeProperty<?>> emptyList());
+    public LSFSlave(String name, String label, int numExecutors) throws Descriptor.FormException, IOException {
+        super(name, "description", "jenkins", numExecutors, Node.Mode.NORMAL, label, new JNLPLauncher(), new LSFRetentionStrategy(0), Collections.<NodeProperty<?>> emptyList());
         LOGGER.info("Constructing LSF slave " + name);
     }
 

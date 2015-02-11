@@ -17,7 +17,15 @@
   <clouds>
     <org.jenkinsci.plugins.lsf.LSFCloud plugin="lsf-jenkins@1.0-SNAPSHOT">
       <name>LSFCloud</name>
-      <cloudName>Default</cloudName>
+      <cloudName>LSF1</cloudName>
+      <queueType>8m</queueType>
+      <label>LSF1</label>
+    </org.jenkinsci.plugins.lsf.LSFCloud>
+    <org.jenkinsci.plugins.lsf.LSFCloud plugin="lsf-jenkins@1.0-SNAPSHOT">
+      <name>LSFCloud</name>
+      <cloudName>LSF2</cloudName>
+      <queueType>1h</queueType>
+      <label>LSF2</label>
     </org.jenkinsci.plugins.lsf.LSFCloud>
   </clouds>
   <slaves/>

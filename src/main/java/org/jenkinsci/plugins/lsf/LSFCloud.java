@@ -39,24 +39,26 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
-import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
 
 /**
  *
  * @author Laisvydas Skurevicius
  */
 public class LSFCloud extends Cloud {
-    
+
     private String cloudName;
+    private String queueType;
+    private String label;
 
     private static final Logger LOGGER = Logger.getLogger(LSFCloud.class.getName());
 
     @DataBoundConstructor
-    public LSFCloud(String cloudName) {
+    public LSFCloud(String cloudName, String queueType, String label) {
         super("LSFCloud");
         this.cloudName = cloudName;
+        this.queueType = queueType;
+        this.label = label;
     }
 
     @Override
@@ -78,12 +80,12 @@ public class LSFCloud extends Cloud {
 
     private LSFSlave doProvision(int numExecutors) throws Descriptor.FormException, IOException {
         String name = "LSF-jenkins-" + UUID.randomUUID().toString();
-        return new LSFSlave(name, numExecutors);
+        return new LSFSlave(name, this.label, numExecutors);
     }
 
     @Override
     public boolean canProvision(Label label) {
-        if (label.matches(Label.parse("LSF"))) {
+        if (label.matches(Label.parse(this.label))) {
             return true;
         }
         return false;
@@ -95,8 +97,22 @@ public class LSFCloud extends Cloud {
 
     public String getCloudName() {
         return cloudName;
-        //return getDescriptor().getCloudName();
+    }
 
+    public String getQueueType() {
+        return queueType;
+    }
+
+    public void setQueueType(String queueType) {
+        this.queueType = queueType;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     @Override
@@ -111,6 +127,5 @@ public class LSFCloud extends Cloud {
         public String getDisplayName() {
             return "LSF Cloud";
         }
-
     }
 }

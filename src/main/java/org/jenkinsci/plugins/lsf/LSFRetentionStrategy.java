@@ -48,16 +48,19 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
 
     @Override
     public long check(SlaveComputer c) {
+
         if (c.getNode() == null) {
             return 1;
         }
-        
+
         for (Project p : Hudson.getInstance().getProjects()) {
-            if (p.isBuilding() && p.getAssignedLabelString().equals("LSF")) {
+            if (p.isBuilding() && p.getAssignedLabelString().equals(c.getNode().getLabelString())) {
+                System.out.println("SUCCESS " + c.getNode().getLabelString());
                 return 1;
             }
         }
-
+        System.out.println("FAIL " + c.getNode().getLabelString());
+        
         if ((System.currentTimeMillis() - c.getConnectTime())
                 < MINUTES.toMillis(idleTerminationMinutes)) {
             return 1;
@@ -68,7 +71,7 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
             ((LSFSlave) (c.getNode())).terminate();
             return 1;
         }
-        
+
         if (c.isIdle()) {
             final long idleMilliseconds
                     = System.currentTimeMillis() - c.getIdleStartMilliseconds();
