@@ -7,13 +7,13 @@
       </causes>
     </hudson.model.CauseAction>
   </actions>
-  <number>4</number>
-  <startTime>1423556196892</startTime>
+  <number>1</number>
+  <startTime>1423586588893</startTime>
   <result>SUCCESS</result>
-  <duration>13443</duration>
+  <duration>13929</duration>
   <charset>windows-1257</charset>
   <keepLog>false</keepLog>
-  <builtOn>LSF-jenkins-762900b2-7840-4bbc-8667-c0d8209fd350</builtOn>
+  <builtOn>LSF-jenkins-280dc750-bb66-4a07-97b8-63881639ded2</builtOn>
   <workspace>jenkins/workspace/new</workspace>
   <hudsonVersion>1.580.1</hudsonVersion>
   <scm class="hudson.scm.NullChangeLogParser"/>

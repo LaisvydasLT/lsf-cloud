@@ -1,2 +1,2 @@
-#Tue Feb 10 14:46:29 CET 2015
-constructor=cloudName
+#Tue Feb 10 17:40:41 CET 2015
+constructor=cloudName,queueType,label
