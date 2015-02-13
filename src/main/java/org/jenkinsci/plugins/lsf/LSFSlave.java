@@ -28,13 +28,13 @@ import hudson.model.Descriptor;
 import hudson.model.Hudson;
 import hudson.model.Node;
 import hudson.model.Slave;
-import hudson.slaves.JNLPLauncher;
 import hudson.slaves.NodeProperty;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import hudson.plugins.sshslaves.SSHLauncher;
+import hudson.util.Secret;
 
 /**
  *
@@ -51,14 +51,14 @@ public class LSFSlave extends Slave {
             String hostName, 
             int port, 
             String userName, 
-            String password) throws Descriptor.FormException, IOException {
+            Secret password) throws Descriptor.FormException, IOException {
         super(name,
                 "description",
                 "jenkins",
                 numExecutors,
                 Node.Mode.NORMAL,
                 label,
-                new SSHLauncher(hostName, port, userName, password, "", ""),
+                new SSHLauncher(hostName, port, userName, Secret.toString(password), "", ""),
                 new LSFRetentionStrategy(1),
                 Collections.<NodeProperty<?>>emptyList());
         LOGGER.info("Constructing LSF slave " + name);

@@ -32,6 +32,7 @@ import hudson.model.Node;
 import hudson.slaves.Cloud;
 import hudson.slaves.NodeProvisioner;
 import hudson.slaves.NodeProvisioner.PlannedNode;
+import hudson.util.Secret;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,7 +57,7 @@ public class LSFCloud extends Cloud {
     private String hostName;
     private int port;
     private String userName;
-    private String password;
+    private Secret password;
 
     private static final Logger LOGGER = Logger.getLogger(LSFCloud.class.getName());
 
@@ -69,7 +70,7 @@ public class LSFCloud extends Cloud {
         this.hostName = hostName;
         this.port = port;
         this.userName = userName;
-        this.password = password;
+        this.password = Secret.fromString(password);
     }
 
     // Creates a slave when there is a running job with an appropriate label
@@ -153,11 +154,11 @@ public class LSFCloud extends Cloud {
     }
 
     public String getPassword() {
-        return password;
+        return Secret.toString(password);
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = Secret.fromString(password);
     }
 
     @Override
