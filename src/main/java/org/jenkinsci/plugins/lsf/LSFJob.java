@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 seven.
+ * Copyright 2015 Laisvydas Skurevicius.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,13 +28,15 @@ import hudson.model.ItemGroup;
 
 /**
  *
- * @author seven
+ * @author Laisvydas Skurevicius
  */
 public class LSFJob extends FreeStyleProject {
 
     public LSFJob(ItemGroup parent, String name) {
         super(parent, name);
     }
+    
+    
     
     
     

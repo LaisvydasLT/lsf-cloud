@@ -73,6 +73,7 @@ public class LSFSlave extends Slave {
             LOGGER.log(Level.WARNING, "Failed to terminate LSF instance: "
                     + getInstanceId(), e);
         }
+        
     }
 
     @Override

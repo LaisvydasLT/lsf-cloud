@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 seven.
+ * Copyright 2015 Laisvydas Skurevicius.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,8 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
+import hudson.model.Hudson;
+import hudson.slaves.Cloud;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.tasks.Shell;
@@ -39,7 +41,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  *
- * @author seven
+ * @author Laisvydas Skurevicius
  */
 public class LSFBuilder extends Builder {
 
@@ -56,27 +58,38 @@ public class LSFBuilder extends Builder {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        Shell sh = new Shell("bsub " + job + " | tee output");
+        String queueType = "8nm";
+        for (Cloud cloud : Hudson.getInstance().clouds) {
+            if(cloud instanceof LSFCloud && cloud.canProvision(build.getProject().getAssignedLabel())) {
+                queueType = ((LSFCloud) cloud).getQueueType();
+                break;
+            }
+        }
+        Shell sh = new Shell("bsub -q " + queueType + " " + job + " | tee output");
         sh.perform(build, launcher, listener);
         CopyToMasterNotifier copy = new CopyToMasterNotifier("output", "", true, "output", true);
         copy.perform(build, launcher, listener);
         BufferedReader br = new BufferedReader(new FileReader("output/output"));
         String jobId = br.readLine();
         jobId = jobId.substring(jobId.indexOf('<', 0) + 1, jobId.indexOf('>', 0));
-        System.out.println(jobId);
-        String jobStatus = "";
-        sh = new Shell("bjobs " + jobId + " | tee output");
-        while (!jobStatus.equals("DONE")) {
-            Thread.sleep(60000);
+        try {
+            String jobStatus = "";
+            sh = new Shell("bjobs " + jobId + " | tee output");
+            while (!jobStatus.equals("DONE")) {
+                Thread.sleep(60000);
+                sh.perform(build, launcher, listener);
+                copy.perform(build, launcher, listener);
+                br = new BufferedReader(new FileReader("output/output"));
+                br.readLine();
+                jobStatus = br.readLine().trim().split(" ")[2];
+            }
+            sh = new Shell("cat LSFJOB_" + jobId + "/STDOUT");
             sh.perform(build, launcher, listener);
-            copy.perform(build, launcher, listener);
-            br = new BufferedReader(new FileReader("output/output"));
-            br.readLine();
-            jobStatus = br.readLine().trim().split(" ")[2];
-            System.out.println(jobStatus);
+        } catch (InterruptedException e) {
+            sh = new Shell("bkill " + jobId);
+            sh.perform(build, launcher, listener);
+            return false;
         }
-        sh = new Shell("cat LSFJOB_" + jobId + "/STDOUT");
-        sh.perform(build, launcher, listener);
         return true;
     }
 
