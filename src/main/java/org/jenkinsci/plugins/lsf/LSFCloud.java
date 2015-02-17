@@ -26,7 +26,6 @@ package org.jenkinsci.plugins.lsf;
 import hudson.Extension;
 import hudson.model.Computer;
 import hudson.model.Descriptor;
-import hudson.model.Hudson;
 import hudson.model.Label;
 import hudson.model.Node;
 import hudson.slaves.Cloud;
@@ -40,6 +39,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
+import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -54,6 +54,7 @@ public class LSFCloud extends Cloud {
     private String queueType;
     // The label that the cloud is associated with
     private String label;
+    // Host name of the slave computer
     private String hostName;
     private int port;
     private String userName;
@@ -73,13 +74,17 @@ public class LSFCloud extends Cloud {
         this.password = Secret.fromString(password);
     }
 
-    // Creates a slave when there is a running job with an appropriate label
+    /**
+     * Creates a slave when there is a running job with an appropriate label
+     * @param label
+     * @param excessWorkload
+     * @return 
+     */
     @Override
     public Collection<NodeProvisioner.PlannedNode> provision(Label label, final int excessWorkload) {
-        Hudson h = Hudson.getInstance();
-        List<Node> slaves = h.getNodes();
+        //List<Node> slaves = Jenkins.getInstance().getNodes();
         List<PlannedNode> list = new ArrayList<PlannedNode>();
-        if (slaves.isEmpty()) {
+        //if (slaves.isEmpty()) {
             list.add(new PlannedNode(this.getDisplayName(), Computer.threadPoolForRemoting
                     .submit(new Callable<Node>() {
                         public Node call() throws Exception {
@@ -87,7 +92,7 @@ public class LSFCloud extends Cloud {
                             return s;
                         }
                     }), excessWorkload));
-        }
+        //}
         return list;
     }
 
@@ -96,7 +101,11 @@ public class LSFCloud extends Cloud {
         return new LSFSlave(name, this.label, numExecutors, hostName, port, userName, password);
     }
 
-    // Checks if a jobs label matches the clouds label
+    /**
+     * Checks if a jobs label matches the clouds label and determines if a slave should be created
+     * @param label
+     * @return 
+     */
     @Override
     public boolean canProvision(Label label) {
         if (label.matches(Label.parse(this.label))) {

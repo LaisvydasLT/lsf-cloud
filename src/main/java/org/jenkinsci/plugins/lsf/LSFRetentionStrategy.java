@@ -24,8 +24,6 @@
 package org.jenkinsci.plugins.lsf;
 
 import hudson.model.Descriptor;
-import hudson.model.Hudson;
-import hudson.model.Project;
 import hudson.slaves.RetentionStrategy;
 import hudson.slaves.SlaveComputer;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -48,7 +46,11 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
     }
 
     
-    // Checks if the slave computer needs to be terminated and terminates if needed
+    /**
+     * Checks if the slave computer needs to be terminated and terminates if needed
+     * @param c
+     * @return 
+     */
     @Override
     public long check(SlaveComputer c) {
 
@@ -56,7 +58,7 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
             return 1;
         }
 
-        /*for (Project p : Hudson.getInstance().getProjects()) {
+        /*for (Project p : Jenkins.getInstance().getProjects()) {
             if (p.isBuilding() && p.getAssignedLabelString().equals(c.getNode().getLabelString())) {
                 System.out.println("SUCCESS " + c.getNode().getLabelString());
                 return 1;

@@ -25,7 +25,6 @@ package org.jenkinsci.plugins.lsf;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
-import hudson.model.Hudson;
 import hudson.model.Node;
 import hudson.model.Slave;
 import hudson.slaves.NodeProperty;
@@ -35,6 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import hudson.plugins.sshslaves.SSHLauncher;
 import hudson.util.Secret;
+import jenkins.model.Jenkins;
 
 /**
  *
@@ -64,11 +64,13 @@ public class LSFSlave extends Slave {
         LOGGER.info("Constructing LSF slave " + name);
     }
 
-    // terminates the slave
+    /**
+     * terminates the slave
+     */
     public void terminate() {
         LOGGER.info("Terminating slave " + getNodeName());
         try {
-            Hudson.getInstance().removeNode(this);
+            Jenkins.getInstance().removeNode(this);
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Failed to terminate LSF instance: "
                     + getInstanceId(), e);
