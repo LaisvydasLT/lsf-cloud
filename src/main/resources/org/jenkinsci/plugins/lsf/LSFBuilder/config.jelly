@@ -28,4 +28,18 @@ THE SOFTWARE.
     <f:entry title="Job" field="job">
         <f:textarea>${it.getJob()}</f:textarea>
     </f:entry>
+    <f:advanced>
+        <f:entry title="Files to send" field="filesToSend">
+            <f:textbox>${it.getFilesToSend()}</f:textbox>
+        </f:entry>
+        <f:entry title="Files to download" field="filesToDownload">
+            <f:textbox>${it.getFilesToDownload()}</f:textbox>
+        </f:entry>
+        <f:entry title="Download destination" field="downloadDestination">
+            <f:textbox>${it.getDownloadDestination()}</f:textbox>
+        </f:entry>
+        <f:entry title="Status check frequency" field="checkFrequencyMinutes">
+            <f:textbox>${it.getCheckFrequencyMinutes()}</f:textbox>
+        </f:entry>
+    </f:advanced>
 </j:jelly>

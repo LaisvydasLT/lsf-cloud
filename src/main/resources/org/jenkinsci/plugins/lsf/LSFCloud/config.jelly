@@ -34,14 +34,14 @@ THE SOFTWARE.
     <f:entry title="Label" field="label">
         <f:textbox field="label" clazz="required">${it.getLabel()}</f:textbox>
     </f:entry>
-    <f:entry title="Host name" field="hostName">
-        <f:textbox field="hostName" clazz="required">${it.getHostName()}</f:textbox>
+    <f:entry title="Host name" field="hostname">
+        <f:textbox field="hostname" clazz="required">${it.getHostname()}</f:textbox>
     </f:entry>
     <f:entry title="Port" field="port">
         <f:textbox field="port" clazz="required">${it.getPort()}</f:textbox>
     </f:entry>
-    <f:entry title="User name" field="userName">
-        <f:textbox field="userName" clazz="required">${it.getUserName()}</f:textbox>
+    <f:entry title="User name" field="username">
+        <f:textbox field="username" clazz="required">${it.getUsername()}</f:textbox>
     </f:entry>
     <f:entry title="Password" field="password">
         <f:password field="password" clazz="required">${it.getPassword()}</f:password>
