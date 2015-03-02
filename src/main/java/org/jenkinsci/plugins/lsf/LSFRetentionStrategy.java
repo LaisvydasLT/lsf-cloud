@@ -27,6 +27,7 @@ import hudson.model.Descriptor;
 import hudson.slaves.RetentionStrategy;
 import hudson.slaves.SlaveComputer;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -44,7 +45,6 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
     public LSFRetentionStrategy(int idleTerminationMinutes) {
         this.idleTerminationMinutes = idleTerminationMinutes;
     }
-
     
     /**
      * Checks if the slave computer needs to be terminated and terminates if needed
@@ -57,14 +57,6 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
         if (c.getNode() == null) {
             return 1;
         }
-
-        /*for (Project p : Jenkins.getInstance().getProjects()) {
-            if (p.isBuilding() && p.getAssignedLabelString().equals(c.getNode().getLabelString())) {
-                System.out.println("SUCCESS " + c.getNode().getLabelString());
-                return 1;
-            }
-        }*/
-        //System.out.println("FAIL " + c.getNode().getLabelString());
         
         if ((System.currentTimeMillis() - c.getConnectTime())
                 < MINUTES.toMillis(idleTerminationMinutes)) {
@@ -72,7 +64,7 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
         }
 
         if (c.isOffline()) {
-            LOGGER.info("Disconnecting offline computer " + c.getName());
+            LOGGER.log(Level.INFO, "Disconnecting offline computer {0}", c.getName());
             ((LSFSlave) (c.getNode())).terminate();
             return 1;
         }
@@ -82,7 +74,7 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
                     = System.currentTimeMillis() - c.getIdleStartMilliseconds();
 
             if (idleMilliseconds > MINUTES.toMillis(idleTerminationMinutes)) {
-                LOGGER.info("Disconnecting idle computer " + c.getName());
+                LOGGER.log(Level.INFO, "Disconnecting idle computer {0}", c.getName());
                 ((LSFSlave) (c.getNode())).terminate();
             }
         }

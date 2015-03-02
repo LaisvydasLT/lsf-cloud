@@ -53,7 +53,7 @@ public class LSFSlave extends Slave {
             String userName, 
             Secret password) throws Descriptor.FormException, IOException {
         super(name,
-                "description",
+                "",
                 "jenkins",
                 numExecutors,
                 Node.Mode.NORMAL,
@@ -61,21 +61,20 @@ public class LSFSlave extends Slave {
                 new SSHLauncher(hostName, port, userName, Secret.toString(password), "", ""),
                 new LSFRetentionStrategy(1),
                 Collections.<NodeProperty<?>>emptyList());
-        LOGGER.info("Constructing LSF slave " + name);
+        LOGGER.log(Level.INFO, "Constructing LSF slave {0}", name);
     }
 
     /**
      * terminates the slave
      */
     public void terminate() {
-        LOGGER.info("Terminating slave " + getNodeName());
+        LOGGER.log(Level.INFO, "Terminating slave {0}", getNodeName());
         try {
             Jenkins.getInstance().removeNode(this);
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Failed to terminate LSF instance: "
                     + getInstanceId(), e);
         }
-        
     }
 
     @Override

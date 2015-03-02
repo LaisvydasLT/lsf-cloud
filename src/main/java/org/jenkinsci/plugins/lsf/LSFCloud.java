@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
-import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -47,7 +46,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Laisvydas Skurevicius
  */
 public class LSFCloud extends Cloud {
-
+    
     // The name of the cloud
     private String cloudName;
     // LSF queue type
@@ -55,22 +54,23 @@ public class LSFCloud extends Cloud {
     // The label that the cloud is associated with
     private String label;
     // Host name of the slave computer
-    private String hostName;
-    private int port;
-    private String userName;
+    private String hostname;
+    private int port = 22;
+    // credentials for connecting to the slave computer through ssh 
+    private String username;
     private Secret password;
 
     private static final Logger LOGGER = Logger.getLogger(LSFCloud.class.getName());
 
     @DataBoundConstructor
-    public LSFCloud(String cloudName, String queueType, String label, String hostName, int port, String userName, String password) {
-        super("LSFCloud");
+    public LSFCloud(String cloudName, String queueType, String label, String hostname, int port, String username, String password) {
+        super(cloudName);
         this.cloudName = cloudName;
         this.queueType = queueType;
         this.label = label;
-        this.hostName = hostName;
+        this.hostname = hostname;
         this.port = port;
-        this.userName = userName;
+        this.username = username;
         this.password = Secret.fromString(password);
     }
 
@@ -82,23 +82,21 @@ public class LSFCloud extends Cloud {
      */
     @Override
     public Collection<NodeProvisioner.PlannedNode> provision(Label label, final int excessWorkload) {
-        //List<Node> slaves = Jenkins.getInstance().getNodes();
         List<PlannedNode> list = new ArrayList<PlannedNode>();
-        //if (slaves.isEmpty()) {
             list.add(new PlannedNode(this.getDisplayName(), Computer.threadPoolForRemoting
                     .submit(new Callable<Node>() {
+                        @Override
                         public Node call() throws Exception {
                             LSFSlave s = doProvision(excessWorkload);
                             return s;
                         }
                     }), excessWorkload));
-        //}
         return list;
     }
 
     private LSFSlave doProvision(int numExecutors) throws Descriptor.FormException, IOException {
         String name = "LSF-jenkins-" + UUID.randomUUID().toString();
-        return new LSFSlave(name, this.label, numExecutors, hostName, port, userName, password);
+        return new LSFSlave(name, this.label, numExecutors, hostname, port, username, password);
     }
 
     /**
@@ -138,12 +136,12 @@ public class LSFCloud extends Cloud {
         this.label = label;
     }
 
-    public String getHostName() {
-        return hostName;
+    public String getHostname() {
+        return hostname;
     }
 
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
     public int getPort() {
@@ -154,12 +152,12 @@ public class LSFCloud extends Cloud {
         this.port = port;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
