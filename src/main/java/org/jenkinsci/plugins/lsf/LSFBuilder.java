@@ -61,9 +61,6 @@ public class LSFBuilder extends Builder {
     static {
         ENDING_STATES.add("DONE");
         ENDING_STATES.add("EXIT");
-        //ENDING_STATES.add("PSUS");
-        //ENDING_STATES.add("USUS");
-        //ENDING_STATES.add("SSUS");
     }
 
     private String job;
