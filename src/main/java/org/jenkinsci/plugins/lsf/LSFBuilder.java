@@ -61,9 +61,9 @@ public class LSFBuilder extends Builder {
     static {
         ENDING_STATES.add("DONE");
         ENDING_STATES.add("EXIT");
-        ENDING_STATES.add("PSUS");
-        ENDING_STATES.add("USUS");
-        ENDING_STATES.add("SSUS");
+        //ENDING_STATES.add("PSUS");
+        //ENDING_STATES.add("USUS");
+        //ENDING_STATES.add("SSUS");
     }
 
     private String job;
@@ -76,6 +76,7 @@ public class LSFBuilder extends Builder {
      *
      * @param job
      * @param filesToDownload
+     * @param downloadDestination
      * @param filesToSend
      * @param checkFrequencyMinutes
      */
@@ -187,17 +188,22 @@ public class LSFBuilder extends Builder {
         String jobId = br.readLine();
         jobId = jobId.substring(jobId.indexOf('<', 0) + 1, jobId.indexOf('>', 0));
 
-        try {      
+        try {
             shell = new Shell("#!/bin/bash +x\n bjobs " + jobId);
             shell.perform(build, launcher, listener);
 
             // initializes the shell commands for job status and result
+            // command for checking the status of the job
             shell = new Shell("#!/bin/bash +x\n bjobs " + jobId + " > output");
+            // command for getting the ouput of a running job
             Shell bpeek = new Shell("#!/bin/bash +x\n bpeek " + jobId + " > result");
-            Shell result;
+            // command for counting lines in the result file (for tracking of job progress)
             Shell countNumberOfLines = new Shell("#!/bin/bash +x\n wc -l result > output");
+            // used for output progress tracking (specifies how many lines to skip when printing job output file)
             int offset = 2;
+            // a flag which tracks if job has new output (if it needs to be printed)
             boolean new_output = true;
+            Shell result;
 
             // loops for checking the job's status and progress until it reaches an ending state
             while (!ENDING_STATES.contains(jobStatus)) {
@@ -211,14 +217,16 @@ public class LSFBuilder extends Builder {
                 jobStatus = br.readLine().trim().split(" ")[2];
                 listener.getLogger().println("JOB STATUS: " + jobStatus);
                 if (jobStatus.equals("PEND")) {
-                    listener.getLogger().println("Job is still waiting in a queue for scheduling and dispatch...");
+                    listener.getLogger().println("Waiting in a queue for scheduling and dispatch.");
                 } // prints the progress of the job if it is in a running state
                 else if (jobStatus.equals("RUN")) {
+                    listener.getLogger().println("Dispatched to a host and running.");
                     bpeek.perform(build, launcher, fakeListener);
                     countNumberOfLines.perform(build, launcher, fakeListener);
                     copyOutputToMaster.perform(build, launcher, fakeListener);
                     br = new BufferedReader(new FileReader(build.getRootDir().getAbsolutePath() + "/output"));
                     String first_word = br.readLine();
+                    // checks if command didn't fail and the result file exists
                     if (first_word != null) {
                         first_word = first_word.split(" ")[0];
                         if (!first_word.equals("wc:")) {
@@ -239,7 +247,20 @@ public class LSFBuilder extends Builder {
                             }
                         }
                     }
+                } else if (jobStatus.equals("DONE")) {
+                    listener.getLogger().println("Finished normally with zero exit value.");
+                } else if (jobStatus.equals("EXIT")) {
+                    listener.getLogger().println("Finished with non-zero exit value.");
+                } else if (jobStatus.equals("PSUS")) {
+                    listener.getLogger().println("Suspended while pending.");
+                } else if (jobStatus.equals("USUS")) {
+                    listener.getLogger().println("Suspended by user.");
+                } else if (jobStatus.equals("SSUS")) {
+                    listener.getLogger().println("Suspended by the LSF system.");
+                } else if (jobStatus.equals("WAIT")) {
+                    listener.getLogger().println("Members of a chunk job that are waiting to run.");
                 }
+
             }
 
             // prints the remaining job output
@@ -249,21 +270,28 @@ public class LSFBuilder extends Builder {
             result.perform(build, launcher, listener);
             listener.getLogger().println();
             listener.getLogger().println("---------------------------------------------------JOB OUTPUT END-----------------------------------------------------");
+            // downloads the selected files after job completion (if there are any)
             if (!filesToDownload.isEmpty()) {
                 listener.getLogger().println();
-                listener.getLogger().println("Copying the selected files:");
+                listener.getLogger().println("Downloading the selected files:");
+                boolean is_default = false;
+                // default destination is the build directory
                 if (downloadDestination.isEmpty()) {
                     downloadDestination = build.getRootDir().getAbsolutePath();
+                    is_default = true;
                 }
                 CopyToMasterNotifier copyFilesToMaster = new CopyToMasterNotifier(filesToDownload, "", true, downloadDestination, true);
                 copyFilesToMaster.perform(build, launcher, listener);
+                // resets the download destination
+                if (is_default) {
+                    downloadDestination = "";
+                }
             }
-
         } catch (InterruptedException e) {
             // kills the job if it was interrupted
             shell = new Shell("#!/bin/bash +x\n bkill " + jobId);
             shell.perform(build, launcher, listener);
-            jobStatus = "ABORT";
+            jobStatus = "ABORTED";
         } finally {
 
             // Outputs the error log if the job exited
@@ -273,7 +301,7 @@ public class LSFBuilder extends Builder {
                 shell = new Shell("#!/bin/bash +x\n cat errorLog");
                 shell.perform(build, launcher, listener);
 
-                // prints the exit code
+                // prints the exit code if there is one
                 shell = new Shell("#!/bin/bash +x\n bjobs -l " + jobId + " > output");
                 shell.perform(build, launcher, fakeListener);
                 copyOutputToMaster.perform(build, launcher, fakeListener);
