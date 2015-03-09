@@ -38,6 +38,7 @@ import hudson.tasks.Builder;
 import hudson.tasks.Shell;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -401,11 +402,14 @@ public class LSFBuilder extends Builder {
                 fileItem.delete();
                 uploadedFiles.add(f);
                 save();
+            } catch (FileNotFoundException ex) {    
+            } catch (Exception ex) {
+                Logger.getLogger(LSFBuilder.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            finally {
                 rsp.setContentType("text/html");
                 String redirect = req.getRequestURL().toString().substring(0, req.getRequestURL().toString().lastIndexOf("/") + 1) + "startUpload" + "?job=" + job + "&files=" + getUploadedFileNames();
                 rsp.sendRedirect(redirect);
-            } catch (Exception ex) {
-                Logger.getLogger(LSFBuilder.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
