@@ -24,29 +24,27 @@ THE SOFTWARE.
 -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">    
-    <f:entry title="Job" field="job">
-        <f:textarea/>
-    </f:entry>
-    <f:advanced>
-        <f:entry field="uploaded">
-            <j:set var="url" value="${rootURL}/descriptor/org.jenkinsci.plugins.lsf.LSFBuilder/startUpload?job=${it.fullName}&amp;files=${instance.uploadedFiles}"/>
-            <iframe src="${url}" frameborder="0" width="100%"/> 
-        </f:entry>
-        <f:entry title="Files to send" field="filesToSend">
-            <f:textbox/>
-        </f:entry>
-        <f:entry title="Files to download" field="filesToDownload">
-            <f:textbox/>
-        </f:entry>
-        <f:entry title="Download destination" field="downloadDestination">
-            <f:textbox/>
-        </f:entry>
-        <f:entry title="Status check frequency" field="checkFrequencyMinutes">
-            <f:textbox/>
-        </f:entry>
-        <f:entry title="Send email notification" field="sendEmail">
-            <f:checkbox/>
-        </f:entry>
-    </f:advanced>        
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <form method="post" action="uploadFile?job=${request.getParameter('job')}" enctype="multipart/form-data">
+        Upload files to send to LSF:
+        <input type="file" name="uploadedFile" size="40"/>
+        <input type="submit" value="Upload"/>
+    </form>
+    <j:if test="${request.getParameter('files') != ''}">
+        Uploaded files:
+    </j:if>
+    <f:repeatable var="file" name="uploadedFiles" items="${request.getParameter('files')}" noAddButton="true" minimum="0" default="">
+        <j:if test="${file!=null}">
+            
+            <form method="post" action="deleteFile?job=${request.getParameter('job')}&amp;file=${file}" enctype="multipart/form-data">
+                <f:entry>
+                    <f:textbox readonly="true" value="${file}"/>
+                </f:entry>
+                <f:entry>
+                    <input type="submit" value="Delete"/>
+                </f:entry>
+            </form>
+           
+        </j:if>
+    </f:repeatable>
 </j:jelly>

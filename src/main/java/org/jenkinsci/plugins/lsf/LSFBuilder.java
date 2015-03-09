@@ -27,6 +27,7 @@ import com.michelin.cio.hudson.plugins.copytoslave.CopyToMasterNotifier;
 import com.michelin.cio.hudson.plugins.copytoslave.CopyToSlaveBuildWrapper;
 import hudson.Extension;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -45,10 +46,19 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.ServletException;
 import jenkins.model.Jenkins;
 import jenkins.util.BuildListenerAdapter;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 /**
  *
@@ -62,17 +72,26 @@ public class LSFBuilder extends Builder {
         ENDING_STATES.add("DONE");
         ENDING_STATES.add("EXIT");
         /*
-        ENDING_STATES.add("PSUS");
-        ENDING_STATES.add("USUS");
-        ENDING_STATES.add("SSUS");
-        */
+         ENDING_STATES.add("PSUS");
+         ENDING_STATES.add("USUS");
+         ENDING_STATES.add("SSUS");
+         */
     }
 
+    // the batch job script
     private String job;
+    // the files that need to be downloaded after job completion
     private String filesToDownload = "";
+    // the destination path to which the files will be downloaded
     private String downloadDestination;
+    // the files that need to be sent before executing the job
     private String filesToSend = "";
+    // how often the status of the job should be checked
     private int checkFrequencyMinutes = 1;
+    // names of the files that have been uploaded (separated by commas)
+    private String uploadedFiles = getUploadedFiles();
+    // configuration for checking if email should be sent
+    private boolean sendEmail = false;
 
     /**
      *
@@ -83,12 +102,14 @@ public class LSFBuilder extends Builder {
      * @param checkFrequencyMinutes
      */
     @DataBoundConstructor
-    public LSFBuilder(String job, String filesToDownload, String downloadDestination, String filesToSend, int checkFrequencyMinutes) {
+    public LSFBuilder(String job, String filesToDownload, String downloadDestination, String filesToSend, int checkFrequencyMinutes, boolean sendEmail) {
         this.job = job;
         this.filesToDownload = filesToDownload;
         this.downloadDestination = downloadDestination;
         this.filesToSend = filesToSend;
         this.checkFrequencyMinutes = checkFrequencyMinutes;
+        this.uploadedFiles = getUploadedFiles();
+        this.sendEmail = sendEmail;
     }
 
     public String getJob() {
@@ -110,6 +131,11 @@ public class LSFBuilder extends Builder {
     public String getDownloadDestination() {
         return downloadDestination;
     }
+
+    public boolean getSendEmail() {
+        return sendEmail;
+    }
+    
 
     /**
      * This is where the interaction between Jenkins and LSF happens.
@@ -152,12 +178,15 @@ public class LSFBuilder extends Builder {
         String sendFilesShellCommands = "";
         String filesWithoutPaths = "";
         for (String file : filesToSend.split(",")) {
-            File fileToSend = new File(file);
+            File fileToSend = new File(file.trim());
             sendFilesShellCommands = sendFilesShellCommands + "cp \"" + currentWorkingDirectory + "/" + fileToSend.getName() + "\" .\n";
-            Files.copy(fileToSend.toPath(), new File(Jenkins.getInstance().root.getAbsolutePath() + "/userContent/" + fileToSend.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(fileToSend.toPath(), new File(build.getProject().getRootDir().getAbsolutePath() + "/workspace/" + fileToSend.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
             filesWithoutPaths = fileToSend.getName() + "," + filesWithoutPaths;
         }
-        CopyToSlaveBuildWrapper copyToSlave = new CopyToSlaveBuildWrapper(filesWithoutPaths, "", false, false, CopyToSlaveBuildWrapper.RELATIVE_TO_SOMEWHERE_ELSE, false);
+        for (String file : uploadedFiles.split(",")) {
+            sendFilesShellCommands = sendFilesShellCommands + "cp \"" + currentWorkingDirectory + "/" + file + "\" .\n";
+        }
+        CopyToSlaveBuildWrapper copyToSlave = new CopyToSlaveBuildWrapper(filesWithoutPaths + uploadedFiles, "", false, false, CopyToSlaveBuildWrapper.RELATIVE_TO_WORKSPACE, false);
         copyToSlave.setUp(build, launcher, listener);
 
         // stores the job in a script file
@@ -179,9 +208,14 @@ public class LSFBuilder extends Builder {
         // sets the correct permission of the file for execution
         shell = new Shell("#!/bin/bash +x\n chmod 755 " + jobFileName + " > /dev/null");
         shell.perform(build, launcher, fakeListener);
-
+        
+        // checks if email notifications should be sent and configures the command
+        String emailConfiguration = "";
+        if (!getSendEmail()) {
+            emailConfiguration = "LSB_JOB_REPORT_MAIL=N ";
+        }
         // submits the job to LSF
-        shell = new Shell("#!/bin/bash +x\n bsub -q " + queueType + " -e \"errorLog\" " + jobFileName + " | tee output");
+        shell = new Shell("#!/bin/bash +x\n" + emailConfiguration + "bsub -q " + queueType + " -e \"errorLog\" " + jobFileName + " | tee output");
         shell.perform(build, launcher, listener);
 
         // stores the job id
@@ -334,8 +368,68 @@ public class LSFBuilder extends Builder {
         return (DescriptorImpl) super.getDescriptor();
     }
 
+    public String getUploadedFiles() {
+        return getDescriptor().getUploadedFileNames();
+    }
+
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
+
+        public Set<File> uploadedFiles = new HashSet<File>();
+
+        public Set<File> getUploadedFiles() {
+            return uploadedFiles;
+        }
+        
+        public DescriptorImpl() {
+            load();
+        }
+
+        public void doStartUpload(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+            rsp.setContentType("text/html");
+            req.getView(LSFBuilder.class, "startUpload.jelly").forward(req, rsp);
+        }
+
+        public void doUploadFile(StaplerRequest req, StaplerResponse rsp, @QueryParameter String job) throws IOException, ServletException {
+            try {
+                AbstractProject prj = (AbstractProject) Jenkins.getInstance().getItemByFullName(job);
+                ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
+                FileItem fileItem = req.getFileItem("uploadedFile");
+                String fileName = Util.getFileName(fileItem.getName());
+                File f = new File(prj.getRootDir().getAbsolutePath() + "/workspace/" + fileName);
+                fileItem.write(f);
+                fileItem.delete();
+                uploadedFiles.add(f);
+                save();
+                rsp.setContentType("text/html");
+                String redirect = req.getRequestURL().toString().substring(0, req.getRequestURL().toString().lastIndexOf("/") + 1) + "startUpload" + "?job=" + job + "&files=" + getUploadedFileNames();
+                rsp.sendRedirect(redirect);
+            } catch (Exception ex) {
+                Logger.getLogger(LSFBuilder.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        public void doDeleteFile(StaplerRequest req, StaplerResponse rsp, @QueryParameter String job, @QueryParameter String file) throws IOException, ServletException {
+            for (File f : uploadedFiles) {
+                if (f.getName().equals(file)) {
+                    f.delete();
+                    uploadedFiles.remove(f);
+                    break;
+                }
+            }
+            save();
+            rsp.setContentType("text/html");
+            String redirect = req.getRequestURL().toString().substring(0, req.getRequestURL().toString().lastIndexOf("/") + 1) + "startUpload" + "?job=" + job + "&files=" + getUploadedFileNames();
+            rsp.sendRedirect(redirect);
+        }
+
+        public String getUploadedFileNames() {
+            String files = "";
+            for (File f : uploadedFiles) {
+                files = files + f.getName() + ",";
+            }
+            return files;
+        }
 
         @Override
         public String getDisplayName() {
