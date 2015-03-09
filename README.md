@@ -1,10 +1,10 @@
 # lsf-jenkins
 
-SHORT DESCRIPTION
+Short description:
 
 A Jenkins plugin that allows submitting batch jobs to LSF batch system.
 
-INSTALLATION
+Installation:
 
 "SSH Slaves plugin" and "Copy To Slave Plugin" need to be installed before installing  this plugin (you can find them in "Manage Jenkins"->"Manage Plugins"->"Available"). To build and install this plugin on your Jenkins: 
 Run command "mvn clean install" in the "lsf-jenkins" folder.
