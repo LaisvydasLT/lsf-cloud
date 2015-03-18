@@ -1,6 +1,4 @@
-# lsf-jenkins
-
-Short description:
+# Short description:
 
 A Jenkins plugin that allows submitting batch jobs to LSF batch system.
 

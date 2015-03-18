@@ -24,27 +24,28 @@ THE SOFTWARE.
 -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <f:entry title="Cloud Name" field="cloudName">
-        <f:textbox field="cloudName" >${it.getCloudName()}</f:textbox>
+        <f:textbox field="cloudName" />
     </f:entry>
     <f:entry title="LSF queue type" field="queueType">
-        <f:textbox field="queueType" >${it.getQueueType()}</f:textbox>
+        <f:textbox field="queueType" />
     </f:entry>
     <f:entry title="Label" field="label">
-        <f:textbox field="label" clazz="required">${it.getLabel()}</f:textbox>
+        <f:textbox field="label" clazz="required"/>
     </f:entry>
     <f:entry title="Host name" field="hostname">
-        <f:textbox field="hostname" clazz="required">${it.getHostname()}</f:textbox>
+        <f:textbox field="hostname" clazz="required"/>
     </f:entry>
     <f:entry title="Port" field="port">
-        <f:textbox field="port" clazz="required">${it.getPort()}</f:textbox>
+        <f:textbox field="port" clazz="required"/>
     </f:entry>
     <f:entry title="User name" field="username">
-        <f:textbox field="username" clazz="required">${it.getUsername()}</f:textbox>
+        <f:textbox field="username" clazz="required"/>
     </f:entry>
     <f:entry title="Password" field="password">
-        <f:password field="password" clazz="required">${it.getPassword()}</f:password>
+        <f:password field="password" clazz="required"/>
     </f:entry>
 </j:jelly>
 

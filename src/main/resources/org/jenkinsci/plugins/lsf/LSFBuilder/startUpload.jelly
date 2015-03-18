@@ -24,8 +24,10 @@ THE SOFTWARE.
 -->
 
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <form method="post" action="uploadFile?job=${request.getParameter('job')}" enctype="multipart/form-data">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <form method="post" action="uploadFile?job=${request.getParameter('job')}" 
+          enctype="multipart/form-data">
         Upload files to send to LSF:
         <input type="file" name="uploadedFile" size="40"/>
         <input type="submit" value="Upload"/>
@@ -33,10 +35,14 @@ THE SOFTWARE.
     <j:if test="${request.getParameter('files') != ''}">
         Uploaded files:
     </j:if>
-    <f:repeatable var="file" name="uploadedFiles" items="${request.getParameter('files')}" noAddButton="true" minimum="0" default="">
+    <f:repeatable var="file" name="uploadedFiles" 
+                  items="${request.getParameter('files')}" 
+                  noAddButton="true" minimum="0" default="">
         <j:if test="${file!=null}">
             
-            <form method="post" action="deleteFile?job=${request.getParameter('job')}&amp;file=${file}" enctype="multipart/form-data">
+            <form method="post" 
+                  action="deleteFile?job=${request.getParameter('job')}&amp;file=${file}" 
+                  enctype="multipart/form-data">
                 <f:entry>
                     <f:textbox readonly="true" value="${file}"/>
                 </f:entry>
