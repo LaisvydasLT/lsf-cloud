@@ -65,7 +65,7 @@ import org.kohsuke.stapler.StaplerResponse;
  *
  * @author Laisvydas Skurevicius
  */
-public class LSFBuilder extends Builder {
+public class BatchBuilder extends Builder {
 
     // the batch job script
     private String job;
@@ -97,7 +97,7 @@ public class LSFBuilder extends Builder {
      * @param sendEmail
      */
     @DataBoundConstructor
-    public LSFBuilder(String job, String filesToDownload,
+    public BatchBuilder(String job, String filesToDownload,
             String downloadDestination, String filesToSend,
             int checkFrequencyMinutes, boolean sendEmail) {
         this.job = job;
@@ -267,9 +267,9 @@ public class LSFBuilder extends Builder {
         // finds the queue type by searching through the clouds 
         // with the associated label
         for (Cloud cloud : Jenkins.getInstance().clouds) {
-            if (cloud instanceof LSFCloud && cloud.canProvision(
+            if (cloud instanceof BatchCloud && cloud.canProvision(
                     build.getProject().getAssignedLabel())) {
-                return ((LSFCloud) cloud).getQueueType();
+                return ((BatchCloud) cloud).getQueueType();
             }
         }
         return null;
@@ -312,26 +312,33 @@ public class LSFBuilder extends Builder {
             throws IOException, InterruptedException {
         String sendFilesShellCommands = "";
         String filesWithoutPaths = "";
-        for (String file : filesToSend.split(",")) {
-            File fileToSend = new File(file.trim());
-            sendFilesShellCommands = sendFilesShellCommands + "cp \""
-                    + slaveWorkingDirectory + "/"
-                    + fileToSend.getName() + "\" .\n";
-            Files.copy(fileToSend.toPath(),
-                    new File(masterWorkingDirectory
-                            + fileToSend.getName()).toPath(),
-                    StandardCopyOption.REPLACE_EXISTING);
-            filesWithoutPaths = fileToSend.getName() + "," + filesWithoutPaths;
+        if (!filesToSend.isEmpty()) {
+            for (String file : filesToSend.split(",")) {
+                File fileToSend = new File(file.trim());
+                sendFilesShellCommands = sendFilesShellCommands + "cp \""
+                        + slaveWorkingDirectory + "/"
+                        + fileToSend.getName() + "\" .\n";
+                Files.copy(fileToSend.toPath(),
+                        new File(masterWorkingDirectory
+                                + fileToSend.getName()).toPath(),
+                        StandardCopyOption.REPLACE_EXISTING);
+                filesWithoutPaths = fileToSend.getName() + ","
+                        + filesWithoutPaths;
+            }
         }
         for (String file : uploadedFiles.split(",")) {
             sendFilesShellCommands = sendFilesShellCommands + "cp \""
                     + slaveWorkingDirectory + "/" + file + "\" .\n";
         }
-        CopyToSlaveBuildWrapper copyToSlave
-                = new CopyToSlaveBuildWrapper(filesWithoutPaths + uploadedFiles,
-                        "", false, false,
-                        CopyToSlaveBuildWrapper.RELATIVE_TO_WORKSPACE, false);
-        copyToSlave.setUp(build, launcher, listener);
+        if (!filesToSend.isEmpty() || !uploadedFiles.isEmpty()) {
+            CopyToSlaveBuildWrapper copyToSlave
+                    = new CopyToSlaveBuildWrapper(filesWithoutPaths 
+                            + uploadedFiles,
+                            "", false, false,
+                            CopyToSlaveBuildWrapper.RELATIVE_TO_WORKSPACE, 
+                            false);
+            copyToSlave.setUp(build, launcher, listener);
+        }
         return sendFilesShellCommands;
     }
 
@@ -431,7 +438,7 @@ public class LSFBuilder extends Builder {
     protected void cleanUpFiles(AbstractBuild<?, ?> build, Launcher launcher,
             BuildListener listener, String jobFileName, String jobId)
             throws InterruptedException {
-        String filesToDelete = jobFileName + " " 
+        String filesToDelete = jobFileName + " "
                 + PROGRESS_FILE + " " + COMMUNICATION_FILE;
         for (String uploadedFile : uploadedFiles.split(",")) {
             filesToDelete = filesToDelete + " " + uploadedFile.trim();
@@ -449,9 +456,7 @@ public class LSFBuilder extends Builder {
         }
         file = new File(masterWorkingDirectory + COMMUNICATION_FILE);
         file.delete();
-        Shell shell = new Shell("rm -rf LSFJOB_" + jobId);
-        shell.perform(build, launcher, listener);
-        shell = new Shell("rm " + filesToDelete);
+        Shell shell = new Shell("rm " + filesToDelete);
         shell.perform(build, launcher, listener);
     }
 
@@ -480,7 +485,7 @@ public class LSFBuilder extends Builder {
         public void doStartUpload(StaplerRequest req, StaplerResponse rsp)
                 throws IOException, ServletException {
             rsp.setContentType("text/html");
-            req.getView(LSFBuilder.class,
+            req.getView(BatchBuilder.class,
                     "startUpload.jelly").forward(req, rsp);
         }
 
@@ -501,7 +506,7 @@ public class LSFBuilder extends Builder {
                 save();
             } catch (FileNotFoundException ex) {
             } catch (Exception ex) {
-                Logger.getLogger(LSFBuilder.class.getName())
+                Logger.getLogger(BatchBuilder.class.getName())
                         .log(Level.SEVERE, null, ex);
             } finally {
                 rsp.setContentType("text/html");

@@ -40,12 +40,12 @@ import jenkins.model.Jenkins;
  *
  * @author Laisvydas Skurevicius
  */
-public class LSFSlave extends Slave {
+public class BatchSlave extends Slave {
 
-    private static final Logger LOGGER = Logger.getLogger(LSFSlave.class
+    private static final Logger LOGGER = Logger.getLogger(BatchSlave.class
             .getName());
 
-    public LSFSlave(String name,
+    public BatchSlave(String name,
             String label,
             int numExecutors,
             String hostName,
@@ -60,7 +60,7 @@ public class LSFSlave extends Slave {
                 label,
                 new SSHLauncher(hostName, port, userName, 
                         Secret.toString(password), "", ""),
-                new LSFRetentionStrategy(1),
+                new BatchRetentionStrategy(1),
                 Collections.<NodeProperty<?>>emptyList());
         LOGGER.log(Level.INFO, "Constructing LSF slave {0}", name);
     }

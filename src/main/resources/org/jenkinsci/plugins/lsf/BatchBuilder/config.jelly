@@ -25,27 +25,30 @@ THE SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
-         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <f:entry title="Cloud Name" field="cloudName">
-        <f:textbox field="cloudName" />
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">    
+    <f:entry title="Job" field="job">
+        <f:textarea/>
     </f:entry>
-    <f:entry title="LSF queue type" field="queueType">
-        <f:textbox field="queueType" />
-    </f:entry>
-    <f:entry title="Label" field="label">
-        <f:textbox field="label" clazz="required"/>
-    </f:entry>
-    <f:entry title="Host name" field="hostname">
-        <f:textbox field="hostname" clazz="required"/>
-    </f:entry>
-    <f:entry title="Port" field="port">
-        <f:textbox field="port" clazz="required"/>
-    </f:entry>
-    <f:entry title="User name" field="username">
-        <f:textbox field="username" clazz="required"/>
-    </f:entry>
-    <f:entry title="Password" field="password">
-        <f:password field="password" clazz="required"/>
-    </f:entry>
+    <f:advanced>
+        <f:entry field="uploaded">
+            <j:set var="url" 
+                   value="${rootURL}/descriptor/org.jenkinsci.plugins.lsf.BatchBuilder/startUpload?job=${it.fullName}&amp;files=${instance.uploadedFiles}"/>
+            <iframe src="${url}" frameborder="0" width="100%"/> 
+        </f:entry>
+        <f:entry title="Files to send" field="filesToSend">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="Files to download" field="filesToDownload">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="Download destination" field="downloadDestination">
+            <f:textbox/>
+        </f:entry>
+        <f:entry title="Status check frequency" field="checkFrequencyMinutes">
+            <f:textbox default="1"/>
+        </f:entry>
+        <f:entry title="Send email notification" field="sendEmail">
+            <f:checkbox/>
+        </f:entry>
+    </f:advanced>        
 </j:jelly>
-

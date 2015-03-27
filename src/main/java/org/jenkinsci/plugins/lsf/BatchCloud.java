@@ -45,7 +45,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @author Laisvydas Skurevicius
  */
-public class LSFCloud extends Cloud {
+public class BatchCloud extends Cloud {
 
     // The name of the cloud
     private String cloudName;
@@ -61,10 +61,10 @@ public class LSFCloud extends Cloud {
     private Secret password;
 
     private static final Logger LOGGER = Logger
-            .getLogger(LSFCloud.class.getName());
+            .getLogger(BatchCloud.class.getName());
 
     @DataBoundConstructor
-    public LSFCloud(String cloudName, String queueType, String label,
+    public BatchCloud(String cloudName, String queueType, String label,
             String hostname, int port, String username, String password) {
         super(cloudName);
         this.cloudName = cloudName;
@@ -91,17 +91,17 @@ public class LSFCloud extends Cloud {
                 Computer.threadPoolForRemoting.submit(new Callable<Node>() {
                     @Override
                     public Node call() throws Exception {
-                        LSFSlave s = doProvision(excessWorkload);
+                        BatchSlave s = doProvision(excessWorkload);
                         return s;
                     }
                 }), excessWorkload));
         return list;
     }
 
-    private LSFSlave doProvision(int numExecutors) 
+    private BatchSlave doProvision(int numExecutors) 
             throws Descriptor.FormException, IOException {
-        String name = "LSF-jenkins-" + UUID.randomUUID().toString();
-        return new LSFSlave(name, this.label, numExecutors, hostname, port, 
+        String name = "BatchSystem-" + UUID.randomUUID().toString();
+        return new BatchSlave(name, this.label, numExecutors, hostname, port, 
                 username, password);
     }
 

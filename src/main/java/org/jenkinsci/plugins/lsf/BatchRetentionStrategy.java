@@ -34,15 +34,15 @@ import java.util.logging.Logger;
  *
  * @author Laisvydas Skurevicius
  */
-public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
+public class BatchRetentionStrategy extends RetentionStrategy<SlaveComputer> {
 
     // The amount of minutes until a slave is terminated when idle
     public final int idleTerminationMinutes;
 
     private static final Logger LOGGER = Logger
-            .getLogger(LSFRetentionStrategy.class.getName());
+            .getLogger(BatchRetentionStrategy.class.getName());
 
-    public LSFRetentionStrategy(int idleTerminationMinutes) {
+    public BatchRetentionStrategy(int idleTerminationMinutes) {
         this.idleTerminationMinutes = idleTerminationMinutes;
     }
 
@@ -68,7 +68,7 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
         if (computer.isOffline()) {
             LOGGER.log(Level.INFO, "Disconnecting offline computer {0}",
                     computer.getName());
-            ((LSFSlave) (computer.getNode())).terminate();
+            ((BatchSlave) (computer.getNode())).terminate();
             return 1;
         }
 
@@ -80,7 +80,7 @@ public class LSFRetentionStrategy extends RetentionStrategy<SlaveComputer> {
             if (idleMilliseconds > MINUTES.toMillis(idleTerminationMinutes)) {
                 LOGGER.log(Level.INFO, "Disconnecting idle computer {0}",
                         computer.getName());
-                ((LSFSlave) (computer.getNode())).terminate();
+                ((BatchSlave) (computer.getNode())).terminate();
             }
         }
         return 1;
