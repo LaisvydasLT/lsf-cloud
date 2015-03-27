@@ -8,11 +8,11 @@ A Jenkins plugin that allows submitting batch jobs to LSF batch system.
 
 To build and install this plugin on your Jenkins:
 
-Run command `mvn clean install` in the `lsf-jenkins` folder.
+Run command `mvn clean install` in the `lsf-cloud` folder.
 
 Open your Jenkins, go to "Manage Jenkins"->"Manage Plugins"->"Advanced".
 
-Select the file `lsf-jenkins.hpi` (from the `lsf-jenkins/target folder`) in the "Upload Plugin" section and press "Upload".
+Select the file `lsf-cloud.hpi` (from the `lsf-cloud/target` folder) in the "Upload Plugin" section and press "Upload".
 The plugin should be installed on your Jenkins now.
 
 # How to use:
