@@ -9,6 +9,7 @@
     <version>1.580.1</version>
     <relativePath/>
   </parent>
+  
   <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>lsf-jenkins</artifactId>
   <version>1.0-SNAPSHOT</version>
@@ -24,30 +25,35 @@
       <url>http://opensource.org/licenses/MIT</url>
     </license>
   </licenses>
+  
   <developers>
     <developer>
-      <id>LaisvydasLT</id>
+      <id>laisvydas</id>
       <name>Laisvydas Skurevicius</name>
       <email>laisvydas.skurevicius@gmail.com</email>
     </developer>
   </developers>
+  
   <scm>
-    <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <url>http://github.com/jenkinsci/${project.artifactId}-plugin</url>
+    <connection>scm:git:git://github.com/jenkinsci/lsf-cloud-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/lsf-cloud-plugin.git</developerConnection>
+    <url>http://github.com/jenkinsci/lsf-cloud-plugin</url>
   </scm>
+  
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>
       <url>http://repo.jenkins-ci.org/public/</url>
     </repository>
   </repositories>
+  
   <pluginRepositories>
     <pluginRepository>
       <id>repo.jenkins-ci.org</id>
       <url>http://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
+  
     <dependencies>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
