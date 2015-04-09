@@ -2,18 +2,15 @@
 
 A Jenkins plugin that allows submitting batch jobs to LSF batch system.
 
-# Installation:
+# Plugin features:
 
-"SSH Slaves plugin" and "Copy To Slave Plugin" need to be installed before installing  this plugin (you can find them in "Manage Jenkins"->"Manage Plugins"->"Available"). 
+Adds a new type of cloud ("LSF Cloud") which creates a slave for every running job with the specified label and terminates the slave when the job is done. Every cloud is associated with a queue type of LSF batch system, so all slaves created by the cloud will submit batch jobs to the associated queue.
 
-To build and install this plugin on your Jenkins:
+Adds a new type of build step ("Run job on LSF") which allows submitting a batch job to LSF. The build step monitors the job status and periodically (time is configurable) outputs the progress (output of the job) if the job is running. It also outputs the errors and the exit code of the job if the job fails. If the job is terminated in Jenkins, it is also terminated in LSF.
 
-Run command `mvn clean install` in the `lsf-cloud` folder.
+Allows files to be uploaded (or specified by a path) and sent to LSF before the execution of the job and downloaded from LSF after the job is finished (currently only shared file systems are supported), this is configured in the new build step.
 
-Open your Jenkins, go to "Manage Jenkins"->"Manage Plugins"->"Advanced".
-
-Select the file `lsf-cloud.hpi` (from the `lsf-cloud/target` folder) in the "Upload Plugin" section and press "Upload".
-The plugin should be installed on your Jenkins now.
+Allows to select if the owner of the job should receive an email from LSF when the job is done.
 
 # How to use:
 
