@@ -147,8 +147,8 @@ public class BatchBuilder extends Builder {
     public boolean perform(AbstractBuild<?, ?> build,
             Launcher launcher, BuildListener listener)
             throws InterruptedException, IOException {
-        masterWorkingDirectory = build.getProject().getRootDir()
-                .getAbsolutePath() + "/workspace/";
+        masterWorkingDirectory = Jenkins.getInstance().root.getAbsolutePath()
+                + "/userContent/" + build.getProject().getName() + "/";
         BatchSystem batchSystem = new LSF(build, launcher,
                 listener, COMMUNICATION_FILE, masterWorkingDirectory);
         CopyToMasterNotifier copyFileToMaster
@@ -169,7 +169,7 @@ public class BatchBuilder extends Builder {
         // sends the selected files to the slave 
         // and prepares the commands to send files to LSF
         String sendFilesShellCommands = sendFiles(build, launcher, listener);
-        sendJobToSlave(build, launcher, fakeListener, sendFilesShellCommands,
+        sendJobToSlave(build, launcher, listener, sendFilesShellCommands,
                 jobFileName);
         // sets the correct permission of the file for execution
         setPermissionOnJobFile(build, launcher, listener, jobFileName);
@@ -322,20 +322,24 @@ public class BatchBuilder extends Builder {
                         new File(masterWorkingDirectory
                                 + fileToSend.getName()).toPath(),
                         StandardCopyOption.REPLACE_EXISTING);
-                filesWithoutPaths = fileToSend.getName() + ","
+                filesWithoutPaths = build.getProject().getName() + "/"
+                        + fileToSend.getName() + ","
                         + filesWithoutPaths;
             }
         }
-        for (String file : uploadedFiles.split(",")) {
-            sendFilesShellCommands = sendFilesShellCommands + "cp \""
-                    + slaveWorkingDirectory + "/" + file + "\" .\n";
+        if (!uploadedFiles.isEmpty()) {
+            for (String file : uploadedFiles.split(",")) {
+                sendFilesShellCommands = sendFilesShellCommands + "cp \""
+                        + slaveWorkingDirectory + "/" + file + "\" .\n";
+                filesWithoutPaths = build.getProject().getName() + "/" + file
+                        + "," + filesWithoutPaths;
+            }
         }
         if (!filesToSend.isEmpty() || !uploadedFiles.isEmpty()) {
             CopyToSlaveBuildWrapper copyToSlave
-                    = new CopyToSlaveBuildWrapper(filesWithoutPaths 
-                            + uploadedFiles,
-                            "", false, false,
-                            CopyToSlaveBuildWrapper.RELATIVE_TO_WORKSPACE, 
+                    = new CopyToSlaveBuildWrapper(filesWithoutPaths,
+                            "", true, false,
+                            CopyToSlaveBuildWrapper.RELATIVE_TO_HOME,
                             false);
             copyToSlave.setUp(build, launcher, listener);
         }
@@ -403,8 +407,9 @@ public class BatchBuilder extends Builder {
         writer.close();
         // sends the job file to the slave
         CopyToSlaveBuildWrapper copyToSlave = new CopyToSlaveBuildWrapper(
-                jobFileName, "", false, false,
-                CopyToSlaveBuildWrapper.RELATIVE_TO_WORKSPACE, false);
+                build.getProject().getName() + "/" + jobFileName,
+                "", true, false, CopyToSlaveBuildWrapper.RELATIVE_TO_HOME,
+                false);
         copyToSlave.setUp(build, launcher, listener);
     }
 
@@ -493,13 +498,15 @@ public class BatchBuilder extends Builder {
                 @QueryParameter String job)
                 throws IOException, ServletException {
             try {
-                AbstractProject prj = (AbstractProject) Jenkins.getInstance().getItemByFullName(job);
+                AbstractProject prj = (AbstractProject) 
+                        Jenkins.getInstance().getItemByFullName(job);
                 ServletFileUpload upload
                         = new ServletFileUpload(new DiskFileItemFactory());
                 FileItem fileItem = req.getFileItem("uploadedFile");
                 String fileName = Util.getFileName(fileItem.getName());
-                File f = new File(prj.getRootDir().getAbsolutePath()
-                        + "/workspace/" + fileName);
+                File f = new File(Jenkins.getInstance().root.getAbsolutePath()
+                        + "/userContent/" + job + "/" + fileName);
+                System.out.println(f.getPath());
                 fileItem.write(f);
                 fileItem.delete();
                 uploadedFiles.add(f);
