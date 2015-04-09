@@ -28,7 +28,7 @@ THE SOFTWARE.
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <form method="post" action="uploadFile?job=${request.getParameter('job')}" 
           enctype="multipart/form-data">
-        Upload files to send to LSF:
+        Upload files:
         <input type="file" name="uploadedFile" size="40"/>
         <input type="submit" value="Upload"/>
     </form>

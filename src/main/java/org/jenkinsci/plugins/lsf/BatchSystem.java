@@ -48,8 +48,7 @@ public abstract class BatchSystem {
             String masterWorkingDirectory) {
         this.COMMUNICATION_FILE = COMMUNICATION_FILE;
         this.copyFileToMaster = new CopyToMasterNotifier(COMMUNICATION_FILE,
-                "", true, build.getProject().getRootDir().getAbsolutePath()
-                + "/workspace/", true);
+                "", true, masterWorkingDirectory, true);
         this.build = build;
         this.launcher = launcher;
         this.listener = listener;
