@@ -95,7 +95,7 @@ public class LSF extends BatchSystem {
         BufferedReader fileReader = new BufferedReader(
                 new FileReader(masterWorkingDirectory + COMMUNICATION_FILE));
         fileReader.readLine();
-        return fileReader.readLine().trim().split(" ")[2];
+        return fileReader.readLine().trim().split("\\s+")[2];
     }
 
     @Override
